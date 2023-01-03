@@ -1,2 +1,5 @@
 **/mibModules
 Settings.json
+
+# no binaries
+go-webview-snmp-*
