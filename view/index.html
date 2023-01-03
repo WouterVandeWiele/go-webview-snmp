@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GO Webview SNMP</title>
+
+  
+  <!-- bootstrap -->
+  <link rel="stylesheet" href="./deps/bootstrap-5.2.3-dist/css/bootstrap.min.css">
+  <script defer src="./deps/bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- datatables -->
+  <script type="text/javascript" src="./deps/DataTables/jQuery-3.6.0/jquery-3.6.0.min.js"></script> 
+  <link rel="stylesheet" type="text/css" href="./deps/DataTables/datatables.min.css"/>
+  <script type="text/javascript" src="./deps/DataTables/datatables.min.js"></script>
+
+  <link rel="stylesheet" href="./deps/DataTables/Buttons-2.3.3/css/buttons.bootstrap5.min.css">
+  <script type="text/javascript" src="./deps/DataTables/Buttons-2.3.3/js/buttons.bootstrap5.min.js"></script>
+
+  <!-- <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script> -->
+  <script type="text/javascript" src="./deps/DataTables/scrollResize-1.13.1/js/dataTables.scrollResize.min.js"></script>
+  <!-- <script type="text/javascript" src="//cdn.datatables.net/plug-ins/1.13.1/features/scrollResize/dataTables.scrollResize.min.js"></script> -->
+  <!-- <script type="text/javascript" src="https://cdn.datatables.net/buttons/2.3.2/js/dataTables.buttons.min.js"></script> -->
+  <!-- <script type="text/javascript" src="./deps/DataTables/Buttons-2.3.3/js/buttons.bootstrap5.min.js"></script> -->
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> -->
+  <!-- <script type="text/javascript" src="./deps/DataTables/JSZip-2.5.0/jszip.min.js"></script> -->
+  
+  <script src="interface.js" defer></script>
+  <link rel="stylesheet" href="style.css">
+  <!-- <script defer>
+    
+  </script> -->
+</head>
+<body class="bg-light">
+
+<!-- Modal -->
+<div class="modal fade" id="newConnectionModal" tabindex="-1" aria-labelledby="newConnectionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newConnectionModalLabel">Create a new connection</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Save options -->
+
+        <!-- host & port -->
+        <div class="input-group mb-3">
+          <input id="serverIP" type="text" class="form-control" placeholder="127.0.0.1" aria-label="127.0.0.1">
+          <span class="input-group-text">:</span>
+          <input id="serverPort" type="text" class="form-control" placeholder="161" aria-label="161">
+        </div>
+
+        <!-- timeout -->
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Timeout</span>
+          <input id="serverTimeout" type="text" class="form-control" placeholder="10" aria-label="10" aria-describedby="basic-addon1">
+          <span class="input-group-text" id="basic-addon1">s</span>
+        </div>
+
+        <!-- transport -->
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Transport</span>
+          <select id="serverTransport" class="form-select" aria-label="Default select example">
+            <option selected>udp</option>
+            <option>tcp</option>
+          </select>
+        </div>
+
+        <!-- retries -->
+        <div class="input-group mb-3">
+          <span class="input-group-text" id="basic-addon1">Retries</span>
+          <input id="serverRetries" type="text" class="form-control" placeholder="3" aria-label="3" aria-describedby="basic-addon1">
+        </div>
+
+        <!-- SNMP version settings -->
+        <div class="list-group mx-0 w-auto">
+          <label class="list-group-item d-flex gap-2">
+            <input class="form-check-input flex-shrink-0" type="radio" name="listGroupRadiosSnmpVersion" id="listGroupRadiosSnmpVersion1" value="" checked="">
+            <span>
+              SNMP v1
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Community</span>
+                <input id="serverCv1" type="text" class="form-control" placeholder="public" aria-label="public">
+              </div>
+              <!-- <small class="d-block text-muted">With support text underneath to add more detail</small> -->
+            </span>
+          </label>
+          <label class="list-group-item d-flex gap-2">
+            <input class="form-check-input flex-shrink-0" type="radio" name="listGroupRadiosSnmpVersion" id="listGroupRadiosSnmpVersion2" value="">
+            <span>
+              SNMP v2
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Community</span>
+                <input id="serverCv2" type="text" class="form-control" placeholder="public" aria-label="public">
+              </div>
+              <!-- <small class="d-block text-muted">Some other text goes here</small> -->
+            </span>
+          </label>
+          <label class="list-group-item d-flex gap-2">
+            <input class="form-check-input flex-shrink-0" type="radio" name="listGroupRadiosSnmpVersion" id="listGroupRadiosSnmpVersion3" value="">
+            <span>
+              SNMP v3
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Security Model</span>
+                <select id="serverSecurityModel" class="form-select" aria-label="Default select example">
+                  <option selected>SnmpV3SecurityModel</option>
+                </select>
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Username</span>
+                <input id="serverUserName" type="text" class="form-control">
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Authentication Protocol</span>
+                <select id="serverAuthProtocol" class="form-select" aria-label="Default select example">
+                  <option selected>No Auth</option>
+                  <option>MD5</option>
+                  <option>SHA</option>
+                  <option>SHA224</option>
+                  <option>SHA256</option>
+                  <option>SHA384</option>
+                  <option>SHA512</option>
+                </select>
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Authentication Password</span>
+                <input id="serverAuthPass" type="password" class="form-control">
+              </div>
+
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Privacy Protocol</span>
+                <select id="serverPrivProtocol" class="form-select" aria-label="Default select example">
+                  <option selected>No Priv</option>
+                  <option>DES</option>
+                  <option>AES</option>
+                  <option>AES192</option>
+                  <option>AES256</option>
+                  <option>AES192C</option>
+                  <option>AES256C</option>
+                </select>
+              </div>
+
+
+              <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1">Privacy Passphrase</span>
+                <input id="serverPrivPass" type="password" class="form-control">
+              </div>
+
+            </span>
+          </label>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <div class="input-group mb-3">
+          <input id="serverConnectionName" type="text" class="form-control" placeholder="Connection Name" aria-label="Connection Name" onkeyup="settingsGetName()">
+          <button id="serverConnectionSave" type="button" class="btn btn-primary" onclick="settingsNewConnection()" disabled>Save</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <div id="serverConnectionNameFeedback">
+          </div>    
+        </div>  
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<main class="container-fluid pb-5">
+  <div id="header">
+    <!-- connection component -->
+    <div class="input-group my-3">
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newConnectionModal">
+        New connection
+      </button>
+
+      <select id="serverConnections" class="form-select" aria-label="Default select example">
+        <option selected>Select connection</option>
+      </select>
+
+      <button id="serverConnect" class="btn btn-outline-primary" type="button" onclick="callConnect()">Connect
+              
+        <span id="badgeStatusConnected" class="position-absolute top-0 start-100 translate-middle p-2 border border-light rounded-circle bg-danger">
+          <span class="visually-hidden">New alerts</span>
+        </span>
+      </button>
+    </div>
+    
+
+    <nav class="my-3">
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="nav-oidTable-tab" data-bs-toggle="tab" data-bs-target="#nav-oidTable" type="button" role="tab" aria-controls="nav-oidTable" aria-selected="true">OID Table</button>
+        <button class="nav-link" id="nav-mibExplorer-tab" data-bs-toggle="tab" data-bs-target="#nav-mibExplorer" type="button" role="tab" aria-controls="nav-mibExplorer" aria-selected="false">MIB Explorer</button>
+      </div>
+    </nav>
+  </div>
+
+
+  <div class="tab-content" id="tabContent">
+
+    <div class="tab-pane fade show active" id="nav-oidTable" role="tabpanel" aria-labelledby="nav-oidTable-tab" tabindex="0">
+      <!-- actions -->
+      <form class="bg-light">
+        <!-- <form style="position: sticky; top: 0;" class="bg-light"> -->
+        <fieldset id="actionsFieldset" disabled>
+          <div class="input-group mb-3">
+            <input id="actionOID" type="text" class="form-control" placeholder="OID" aria-label="OID">
+            <select id="actionType" name="actionType">
+              <option value="OctetString">OctetString</option>
+              <option value="Boolean">Boolean</option>
+              <option value="Integer">Integer</option>
+              <option value="BitString">BitString</option>
+              <option value="Null">Null</option>
+              <option value="ObjectIdentifier">ObjectIdentifier</option>
+              <option value="ObjectDescriptionIPAddress">ObjectDescriptionIPAddress</option>
+              <option value="Counter32">Counter32</option>
+              <option value="Gauge32">Gauge32</option>
+              <option value="TimeTicks">TimeTicks</option>
+              <option value="Opaque">Opaque</option>
+              <option value="NsapAddress">NsapAddress</option>
+              <option value="Counter64">Counter64</option>
+              <option value="Uinteger32">Uinteger32</option>
+              <option value="OpaqueFloat">OpaqueFloat</option>
+              <option value="OpaqueDouble">OpaqueDouble</option>
+            </select>
+            <input id="actionValue" type="text" class="form-control" placeholder="value" aria-label="value">
+            <button id="actionGet" class="btn btn-outline-primary" type="button" onclick="snmpGet()">Get</button>
+            <button id="actionGetNext" class="btn btn-outline-primary" type="button" onclick="goSnmpGetNext()">GetNext</button>
+            <button id="actionWalk" class="btn btn-outline-primary" type="button" onclick="snmpBulkWalk()">Walk</button>
+            <button id="actionSet" class="btn btn-outline-primary" type="button">Set</button>
+          </div>
+        </fieldset>
+    
+        <div class="input-group mb-3">
+          <button class="btn btn-outline-primary", type="button" onclick="clearOidTableTable()">Clear table</button>
+          <input id="datatablesSearch" type="text" class="form-control" placeholder="search" aria-label="search">
+        </div>
+    
+      </form>
+      
+      <!-- table component -->
+      <div id="resize_wrapper">
+        <table id="oidTable" class="table table-striped table-hover bg-light" cellspacing="0" width="100%">
+          <thead>
+            <!-- <tr style="position: sticky; top: 8.1em;" > -->
+            <tr>
+              <th class="bg-body">Time</th>
+              <th class="bg-body">OID</th>
+              <th class="bg-body">Name</th>
+              <th class="bg-body">Type</th>
+              <th class="bg-body">Value</th>
+            </tr>
+          </thead>
+          <tbody id="oidTableBody" class="table-group-divider">
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="tab-pane fade" id="nav-mibExplorer" role="tabpanel" aria-labelledby="nav-mibExplorer-tab" tabindex="0">
+      <div>
+        <div class="sticky-top my-3">
+          
+          <div class="input-group">
+            <input class="form-control" placeholder="search" list="mibTreeSearchList" id="mibTreeSearch" type="text" onchange="mibTreeSearchFocus()">
+            <button class="btn btn-outline-primary" onclick="mibTreeScrollTop()">To Top</button>
+          </div>
+          <datalist class="form-control selectpicker" id="mibTreeSearchList" data-live-search="true" hidden>
+          </datalist>
+        </div>
+        
+        <p id="mibTreeLoading">Loading</p>
+        <div id="mibtree"></div>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <!-- footer status bar -->
+  <footer class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top fixed-bottom bg-body" id="footer">
+
+    <div id="spinnerStatus" class="col-md-4 mb-0 spinner-border spinner-border-sm text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    
+    <p class="col-md-4 mb-0 text-muted" id="statusText">Ok</p>
+
+    <!-- <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+      <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"></use></svg>
+    </a> -->
+
+  </footer>
+</main>
+</body>
+</html>
